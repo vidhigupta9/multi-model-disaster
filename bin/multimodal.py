@@ -32,25 +32,9 @@ class ImgInstance(object):
         self.imgpath = imgpath
         self.label = label
 
-def resnet_model():
-    IMG_HEIGHT=224
-    IMG_WIDTH=224
-    restnet = ResNet50(include_top=False, weights='imagenet', input_shape = (IMG_HEIGHT, IMG_WIDTH, 3))
-    # for layer in restnet.layers: # in case if we want to freeze the
-    #     layer.trainable = False
-    last_layer_output = restnet.layers[-1].output
-    last_layer_output = keras.layers.Flatten()(last_layer_output)
-    return last_layer_output,restnet
-
 def vgg_model():
     vgg16 = VGG16(weights='imagenet')
-    # Freeze All Layers Except Bottleneck Layers for Fine-Tuning
-    # for layer in vgg16.layers:
-    #     if layer.name in ['fc1', 'fc2', 'logit']:
-    #         continue
-    #     layer.trainable = False
     last_layer_output = vgg16.get_layer('fc2').output
-    # vgg16.summary()
     return last_layer_output, vgg16
 
 
@@ -125,9 +109,6 @@ def dir_exist(dirname):
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
-"""
-It assumes the inputs are text files, train, development and test. 
-"""
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     parser = optparse.OptionParser()
@@ -317,7 +298,6 @@ if __name__ == "__main__":
 
     print(model.summary())
 
-    '''
 
     callback = EarlyStopping(monitor='val_acc', patience=patience_early_stop, verbose=1, mode='max')
     learning_rate_reduction = ReduceLROnPlateau(monitor='val_acc', patience=patience_learning_rate, verbose=1,
@@ -439,4 +419,3 @@ if __name__ == "__main__":
     b = datetime.datetime.now().replace(microsecond=0)
     print ("time taken:")
     print(b - a)
-'''
